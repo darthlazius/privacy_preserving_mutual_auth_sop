@@ -100,7 +100,7 @@ if __name__ == '__main__':
     # Attempt registration on startup (only if not already registered)
     if not SSK_j:
         with app.app_context():
-            response = requests.post("http://localhost:5001/register_server") #Register with RC
+            response = requests.post("http://localhost:5000/register_server") #Register with RC
             if response.status_code != 200:
                 print ("There was an error reaching the server. Check the server URL")
             else:

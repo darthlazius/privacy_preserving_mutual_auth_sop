@@ -75,14 +75,16 @@ def register_user():
         W_i = calculate_wi(r1, r2, A_i)
         C_i = user_data.get("C_i")
         D_i = user_data.get("D_i")
-
+        # print(f"This is the D_i:{D_i}")
         r2_id = hashlib.sha256((r2 + ID_i).encode()).hexdigest()
         r1_pw = hashlib.sha256((r1 + PW_i).encode()).hexdigest()
         xi_int = int(r2_id, 16) ^ int(r1_pw, 16) ^ int(user_data["C_i"], 16)
         X_i = hex(xi_int)[2:].zfill(64)
         Y_i = hex(int(B_i, 16) ^ int(user_data["D_i"], 16))[2:].zfill(64)
         USK_i = hex(int(A_i, 16) ^ int(user_data["D_i"], 16))[2:].zfill(64)
-        E_i = hashlib.sha256((UID_i + USK_i + PW_i).encode()).hexdigest()
+        print(f"This is the user session key:{USK_i}")
+        E_i = hashlib.sha256((UID_i + PW_i + USK_i).encode()).hexdigest()
+        print(f"This is the E_i:{E_i}")
         Z_i = calculate_zi(r1, ID_i, PW_i, List_sJ, ID_i, PW_i, r2)
         SmartCard_i = {"UID_i": UID_i, "A_i": A_i, "B_i": B_i, "W_i": W_i, "X_i": X_i, "Y_i": Y_i, "Z_i": Z_i, "E_i": E_i, "List_sJ": List_sJ, "r1": r1, "r2": r2}  # Storing r1 and r2
 
@@ -110,8 +112,9 @@ def authenticate_with_server():
     hash_idpw = hashlib.sha256((ID_i + PW_i).encode()).hexdigest()
     r1r2 = hex(int(W_i, 16) ^ int(hash_idpw, 16))[2:].zfill(64)
     USK_i = hex(int(calculate_A_i(), 16) ^ int(Y_i, 16) ^ int(calculate_B_i(), 16))[2:].zfill(64)
+    print("This is the challenged user session key : ", USK_i)
     E_i_prime = hashlib.sha256((UID_i + PW_i + USK_i).encode()).hexdigest()
-
+    print(E_i_prime)
     if E_i_prime != E_i:
         print("Authentication failed: Invalid credentials")
         return

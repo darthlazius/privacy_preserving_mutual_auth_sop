@@ -49,11 +49,13 @@ def register_user():
     if not all([UID_i, A_i]):
         return jsonify({"error": "Missing user parameters"}), 400
     USK_i = hashlib.sha256((UID_i+K_rc+r3).encode()).hexdigest()
+    print(f"This is the user session key{USK_i}")
     temp_1 = hashlib.sha256((K_rc+r3+A_i).encode()).hexdigest()
     temp_2 = hashlib.sha256((UID_i+A_i).encode()).hexdigest()
     c_i_int = int(temp_1, 16) ^ int(temp_2, 16) ^int(USK_i, 16)
     C_i = hex(c_i_int)[2:].zfill(64)
     D_i = hex(int(A_i, 16) ^ int(USK_i, 16))[2:].zfill(64)
+    print(f"This is the D_i:{D_i}")
     List_sJ = [(ID_j +server['SSK_j']+server['Loc_j']) for ID_j, server in server_database.items()]
     user_database[UID_i] = {"C_i":C_i} 
 
