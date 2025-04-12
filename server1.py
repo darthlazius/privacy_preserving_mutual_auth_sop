@@ -5,8 +5,23 @@ import time
 import requests
 import json
 import os
-
+import sqlite3
 app = Flask(__name__)
+
+
+def init_server_db():
+    conn = sqlite3.connect('server.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS servers(
+                ID_j TEXT PRIMARY KEY,
+                SSK_j TEXT,
+                Loc_j TEXT,
+                Q_j TEXT)''')
+    conn.commit()
+    conn.close()
+
+
+
 
 RC_URL = os.environ.get("RC_URL", "http://localhost:5000")
 ID_j = os.environ.get("SERVER_ID", "hospital2")
@@ -32,7 +47,6 @@ def home():
     return jsonify({"message": "Welcome to the server ",
                     "creds":{
                         "ID_j": ID_j,
-                        "PW_j": PW_j,
                         "Loc_j": Loc_j
                     }}), 200
 
@@ -68,32 +82,55 @@ def authenticate_user():
     alpha_i = data.get("alpha_i")
     beta_i = data.get("beta_i")
     T1 = data.get("T1")
+    C_i = data.get("C_i")
     UID_i = data.get("UID_i")
-    C_i = data.get("C_i")  # VERY IMPORTANT: Get C_i from the client
+    ID_j_received = data.get("ID_j")
 
-    if not all([alpha_i, beta_i, T1, UID_i, C_i]):  # Check for C_i too
-        return jsonify({"error": "Missing parameters"}), 400
+    if ID_j_received != ID_j:
+        return jsonify({"error": "Invalid Server ID"}), 403
+    
+    T2 = str(int(time.time()))
+    # Step 1: Recompute UID_i from alpha
+    cursor = sqlite3.connect('rc.db').cursor()
+    SSK_j = cursor.execute("SELECT SSK_j FROM servers WHERE ID_j = ?", (ID_j,)).fetchone()
+    SSK_j = SSK_j[0] if SSK_j else None
+    print(SSK_j)
+    h_val = hashlib.sha256((ID_j + SSK_j + T1).encode()).hexdigest()
+    UID_i_recovered = hex(int(alpha_i, 16) ^ int(h_val, 16))[2:].zfill(64)
 
-    # 3. Server receives and verifies
-    delta_T = 10  # Example
-    T2 = str(time.time())
-    if float(T2) - float(T1) > delta_T:
-        return jsonify({"error": "Authentication failed: Timestamp expired"}), 400
+    beta_check = hashlib.sha256((UID_i_recovered + SSK_j + C_i + T1).encode()).hexdigest()
+    if beta_check != beta_i:
+        return jsonify({"error": "β_i mismatch"}), 403
 
-    UID_i_prime = xor_hex_strings(hashlib.sha256((ID_j + str(SSK_j) + T1).encode()).hexdigest(), alpha_i)
-    beta_i_prime = hashlib.sha256((UID_i_prime + str(SSK_j) + C_i + T1).encode()).hexdigest()
+    VT_ij = hashlib.sha256((UID_i_recovered + "location-verification").encode()).hexdigest()
+    h_comb = hashlib.sha256((C_i + UID_i_recovered + ID_j + beta_i).encode()).hexdigest()
+    gamma_i = hex(int(VT_ij + Loc_j.encode().hex(), 16) ^ int(h_comb, 16))[2:].zfill(64)
+    sigma_i = hashlib.sha256((VT_ij + C_i + str(int(T2) - int(T1))).encode()).hexdigest()
 
-    if beta_i_prime != beta_i:
-        return jsonify({"error": "Authentication failed: Invalid request"}), 401
+    return jsonify({
+        "gamma_i": gamma_i,
+        "sigma_i": sigma_i,
+        "T2": T2
+    }), 200
 
-    # 4. Server calculates and sends response
-    VT_ij = secrets.token_hex(16)  
-    gamma_i = xor_hex_strings((VT_ij + Loc_j).encode('utf-8').hex(), hashlib.sha256((C_i + UID_i_prime + ID_j + beta_i_prime).encode()).hexdigest())
-    sigma_i = hashlib.sha256((VT_ij + C_i + str(float(T2) - float(T1))).encode()).hexdigest() #Convert to string before hashing
-    #hashing expects string as the input but you are providing float
 
-    return jsonify({"gamma_i": gamma_i, "sigma_i": sigma_i, "T2": T2, "VT_ij": VT_ij, "Loc_j": Loc_j}), 200
 
+@app.route('/update_server_db', methods=['POST'])
+def update_server_db():
+    T = str(int(time.time()))
+    data = {
+        "ID_j": ID_j,
+        "T": T
+    }
+
+    try:
+        response = requests.post(f"{RC_URL}/update_server_db", json=data)
+        if response.status_code == 200:
+            return jsonify({"message": "Server record updated with RC"}), 200
+        else:
+            return jsonify({"error": response.text}), response.status_code
+    except Exception as e:
+        return jsonify({"error": f"Failed to contact RC: {e}"}), 500
 
 
 if __name__ == '__main__':
