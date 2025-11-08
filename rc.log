@@ -1,0 +1,24 @@
+ * Serving Flask app 'rc'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 294-672-465
+127.0.0.1 - - [08/Nov/2025 12:17:31] "[31m[1mPOST /register_server HTTP/1.1[0m" 415 -
+127.0.0.1 - - [08/Nov/2025 12:17:32] "[31m[1mPOST /register_server HTTP/1.1[0m" 415 -
+127.0.0.1 - - [08/Nov/2025 12:17:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:17:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:18:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:18:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:19:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:19:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:19:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:20:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:20:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:21:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:21:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:21:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:22:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [08/Nov/2025 12:22:34] "GET / HTTP/1.1" 200 -

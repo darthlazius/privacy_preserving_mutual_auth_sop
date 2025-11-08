@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSecure Portal - Healthcare Management System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+</head>
+<body>
+    <!-- Login/Register View -->
+    <div id="auth-view" class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <i class="fas fa-hospital-user"></i>
+                    <h1>MediSecure Portal</h1>
+                </div>
+                <p class="tagline">Secure Healthcare Management Platform</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <button class="auth-tab" data-tab="register">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-panel" class="auth-panel active">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-userid">
+                            <i class="fas fa-id-card"></i> Patient ID
+                        </label>
+                        <input type="text" id="login-userid" placeholder="Enter your patient ID" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </span>
+                        <span class="spinner" style="display: none;"></span>
+                    </button>
+                </form>
+
+                <div id="login-error" class="error-box" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p id="login-error-message"></p>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-panel" class="auth-panel">
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-userid">
+                            <i class="fas fa-id-card"></i> Choose Patient ID
+                        </label>
+                        <input type="text" id="register-userid" placeholder="Create a unique patient ID" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="register-password" placeholder="Create a secure password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-confirm-password">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </span>
+                        <span class="spinner" style="display: none;"></span>
+                    </button>
+                </form>
+
+                <div id="registration-result" class="success-box" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Registration Successful!</h3>
+                    <p>Your secure smartcard credentials have been generated.</p>
+                    <div class="smartcard-info">
+                        <p><strong>UID:</strong> <code id="uid-value" class="copyable"></code></p>
+                        <button class="btn btn-secondary btn-small" id="view-credentials-btn">
+                            <i class="fas fa-eye"></i> View Credentials
+                        </button>
+                    </div>
+                </div>
+
+                <div id="registration-error" class="error-box" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p id="registration-error-message"></p>
+                </div>
+            </div>
+
+            <div class="auth-footer">
+                <p><i class="fas fa-shield-alt"></i> Privacy-Preserving Mutual Authentication</p>
+                <p class="reference">Based on IEEE Access 2020 Research</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application View (After Login) -->
+    <div id="app-view" style="display: none; content-visibility: auto;">
+        <!-- Top Navigation Bar -->
+        <nav class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <i class="fas fa-hospital-user"></i>
+                    <span>MediSecure</span>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search records, appointments...">
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="topbar-btn" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="topbar-btn" title="Messages">
+                        <i class="fas fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-btn" id="user-menu-btn">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="current-user-name">Patient</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="user-dropdown" id="user-dropdown">
+                            <a href="#profile"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#security"><i class="fas fa-shield-alt"></i> Security</a>
+                            <hr>
+                            <a href="#logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#records" class="nav-item" data-view="records">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Medical Records</span>
+                </a>
+                <a href="#appointments" class="nav-item" data-view="appointments">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+                <a href="#prescriptions" class="nav-item" data-view="prescriptions">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                    <span>Prescriptions</span>
+                </a>
+                <a href="#health" class="nav-item" data-view="health">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Health Monitoring</span>
+                </a>
+                <a href="#lab-results" class="nav-item" data-view="lab-results">
+                    <i class="fas fa-flask"></i>
+                    <span>Lab Results</span>
+                </a>
+                <a href="#messages" class="nav-item" data-view="messages">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                    <span class="nav-badge">5</span>
+                </a>
+                <a href="#billing" class="nav-item" data-view="billing">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Billing</span>
+                </a>
+                <a href="#system" class="nav-item" data-view="system">
+                    <i class="fas fa-server"></i>
+                    <span>System Status</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="content-view active">
+                <div class="page-header">
+                    <h1><i class="fas fa-th-large"></i> Dashboard</h1>
+                    <p>Welcome back! Here's your health overview.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Next Appointment</h3>
+                            <p class="stat-value">Dec 15, 2024</p>
+                            <p class="stat-label">Dr. Sarah Johnson - Cardiology</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-prescription-bottle-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Prescriptions</h3>
+                            <p class="stat-value">3</p>
+                            <p class="stat-label">2 due for refill soon</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Pending Lab Results</h3>
+                            <p class="stat-value">1</p>
+                            <p class="stat-label">Blood test from Nov 5</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Outstanding Bills</h3>
+                            <p class="stat-value">$250</p>
+                            <p class="stat-label">2 invoices pending</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-heartbeat"></i> Recent Vitals</h2>
+                            <button class="btn btn-text">View All</button>
+                        </div>
+                        <div class="vitals-list">
+                            <div class="vital-item">
+                                <div class="vital-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div class="vital-info">
+                                    <p class="vital-name">Blood Pressure</p>
+                                    <p class="vital-value">120/80 <span class="normal">Normal</span></p>
+                                    <p class="vital-date">Updated: Nov 8, 2024</p>
+                                </div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-icon">
+                                    <i class="fas fa-thermometer-half"></i>
+                                </div>
+                                <div class="vital-info">
+                                    <p class="vital-name">Body Temperature</p>
+                                    <p class="vital-value">98.6°F <span class="normal">Normal</span></p>
+                                    <p class="vital-date">Updated: Nov 8, 2024</p>
+                                </div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-icon">
+                                    <i class="fas fa-weight"></i>
+                                </div>
+                                <div class="vital-info">
+                                    <p class="vital-name">Weight</p>
+                                    <p class="vital-value">165 lbs <span class="normal">Normal</span></p>
+                                    <p class="vital-date">Updated: Nov 5, 2024</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-clock"></i> Recent Activity</h2>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon blue">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p class="activity-text">Appointment scheduled with Dr. Johnson</p>
+                                    <p class="activity-time">2 days ago</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon green">
+                                    <i class="fas fa-file-medical"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p class="activity-text">Lab results uploaded to your records</p>
+                                    <p class="activity-time">5 days ago</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon orange">
+                                    <i class="fas fa-prescription"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p class="activity-text">Prescription refilled - Lisinopril 10mg</p>
+                                    <p class="activity-time">1 week ago</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon purple">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="activity-info">
+                                    <p class="activity-text">Completed visit with Dr. Smith</p>
+                                    <p class="activity-time">2 weeks ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Records View -->
+            <div id="records-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-file-medical"></i> Medical Records</h1>
+                    <button class="btn btn-primary"><i class="fas fa-upload"></i> Upload Record</button>
+                </div>
+
+                <div class="records-grid">
+                    <div class="record-card">
+                        <div class="record-type">
+                            <i class="fas fa-stethoscope"></i>
+                            <span>Diagnosis</span>
+                        </div>
+                        <h3>Annual Physical Examination</h3>
+                        <p class="record-description">Comprehensive health checkup with all vitals within normal range</p>
+                        <div class="record-meta">
+                            <span><i class="fas fa-user-md"></i> Dr. Sarah Johnson</span>
+                            <span><i class="fas fa-calendar"></i> Oct 15, 2024</span>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-eye"></i> View Details</button>
+                    </div>
+
+                    <div class="record-card">
+                        <div class="record-type">
+                            <i class="fas fa-flask"></i>
+                            <span>Lab Report</span>
+                        </div>
+                        <h3>Complete Blood Count (CBC)</h3>
+                        <p class="record-description">Routine blood work - All parameters normal</p>
+                        <div class="record-meta">
+                            <span><i class="fas fa-hospital"></i> City Medical Lab</span>
+                            <span><i class="fas fa-calendar"></i> Nov 5, 2024</span>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-download"></i> Download PDF</button>
+                    </div>
+
+                    <div class="record-card">
+                        <div class="record-type">
+                            <i class="fas fa-x-ray"></i>
+                            <span>Imaging</span>
+                        </div>
+                        <h3>Chest X-Ray</h3>
+                        <p class="record-description">No abnormalities detected</p>
+                        <div class="record-meta">
+                            <span><i class="fas fa-hospital"></i> Radiology Dept</span>
+                            <span><i class="fas fa-calendar"></i> Sep 20, 2024</span>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-eye"></i> View Images</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments View -->
+            <div id="appointments-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-calendar-check"></i> Appointments</h1>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Book Appointment</button>
+                </div>
+
+                <div class="appointments-container">
+                    <div class="appointment-card upcoming">
+                        <div class="appointment-date">
+                            <span class="date-day">15</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="appointment-details">
+                            <h3>Dr. Sarah Johnson <span class="badge-specialty">Cardiology</span></h3>
+                            <p><i class="fas fa-clock"></i> 10:00 AM - 10:30 AM</p>
+                            <p><i class="fas fa-map-marker-alt"></i> Room 304, 3rd Floor</p>
+                            <p class="appointment-reason">Follow-up consultation</p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-edit"></i> Reschedule</button>
+                            <button class="btn btn-danger btn-small"><i class="fas fa-times"></i> Cancel</button>
+                        </div>
+                    </div>
+
+                    <div class="appointment-card past">
+                        <div class="appointment-date">
+                            <span class="date-day">28</span>
+                            <span class="date-month">OCT</span>
+                        </div>
+                        <div class="appointment-details">
+                            <h3>Dr. Michael Smith <span class="badge-specialty">General Medicine</span></h3>
+                            <p><i class="fas fa-clock"></i> 2:00 PM - 2:30 PM</p>
+                            <p><i class="fas fa-check-circle"></i> Completed</p>
+                            <p class="appointment-reason">Annual checkup</p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-file"></i> View Summary</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescriptions View -->
+            <div id="prescriptions-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-prescription-bottle-alt"></i> Prescriptions</h1>
+                    <button class="btn btn-primary"><i class="fas fa-sync"></i> Request Refill</button>
+                </div>
+
+                <div class="prescriptions-grid">
+                    <div class="prescription-card active">
+                        <div class="prescription-header">
+                            <h3>Lisinopril 10mg</h3>
+                            <span class="badge-active">Active</span>
+                        </div>
+                        <p class="prescription-usage">Take 1 tablet daily with water</p>
+                        <div class="prescription-info">
+                            <p><i class="fas fa-user-md"></i> Prescribed by: Dr. Sarah Johnson</p>
+                            <p><i class="fas fa-calendar"></i> Start Date: Jan 15, 2024</p>
+                            <p><i class="fas fa-pills"></i> Refills Left: 2</p>
+                            <p><i class="fas fa-exclamation-triangle"></i> Refill Due: Dec 20, 2024</p>
+                        </div>
+                        <button class="btn btn-primary btn-small"><i class="fas fa-sync"></i> Request Refill</button>
+                    </div>
+
+                    <div class="prescription-card active">
+                        <div class="prescription-header">
+                            <h3>Metformin 500mg</h3>
+                            <span class="badge-active">Active</span>
+                        </div>
+                        <p class="prescription-usage">Take 1 tablet twice daily with meals</p>
+                        <div class="prescription-info">
+                            <p><i class="fas fa-user-md"></i> Prescribed by: Dr. Michael Smith</p>
+                            <p><i class="fas fa-calendar"></i> Start Date: Mar 10, 2024</p>
+                            <p><i class="fas fa-pills"></i> Refills Left: 3</p>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-info-circle"></i> View Details</button>
+                    </div>
+
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <h3>Amoxicillin 500mg</h3>
+                            <span class="badge-completed">Completed</span>
+                        </div>
+                        <p class="prescription-usage">Take 1 capsule every 8 hours</p>
+                        <div class="prescription-info">
+                            <p><i class="fas fa-user-md"></i> Prescribed by: Dr. Emily Davis</p>
+                            <p><i class="fas fa-calendar"></i> Completed: Oct 25, 2024</p>
+                            <p><i class="fas fa-check-circle"></i> Course Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Monitoring View -->
+            <div id="health-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-heartbeat"></i> Health Monitoring</h1>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Reading</button>
+                </div>
+
+                <div class="health-metrics">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3><i class="fas fa-heartbeat"></i> Blood Pressure</h3>
+                            <span class="metric-status normal">Normal</span>
+                        </div>
+                        <div class="metric-value">120/80 <span class="metric-unit">mmHg</span></div>
+                        <p class="metric-date">Last updated: Nov 8, 2024 at 9:30 AM</p>
+                        <div class="metric-chart">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>7-day trend: Stable</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3><i class="fas fa-weight"></i> Weight</h3>
+                            <span class="metric-status normal">Normal</span>
+                        </div>
+                        <div class="metric-value">165 <span class="metric-unit">lbs</span></div>
+                        <p class="metric-date">Last updated: Nov 5, 2024</p>
+                        <div class="metric-chart">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>30-day trend: -2 lbs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3><i class="fas fa-tint"></i> Blood Glucose</h3>
+                            <span class="metric-status normal">Normal</span>
+                        </div>
+                        <div class="metric-value">95 <span class="metric-unit">mg/dL</span></div>
+                        <p class="metric-date">Last updated: Nov 8, 2024 at 8:00 AM</p>
+                        <div class="metric-chart">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>14-day trend: Stable</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3><i class="fas fa-thermometer-half"></i> Temperature</h3>
+                            <span class="metric-status normal">Normal</span>
+                        </div>
+                        <div class="metric-value">98.6 <span class="metric-unit">°F</span></div>
+                        <p class="metric-date">Last updated: Nov 8, 2024</p>
+                        <div class="metric-chart">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>Status: Normal range</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab Results View -->
+            <div id="lab-results-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-flask"></i> Lab Results</h1>
+                    <button class="btn btn-primary"><i class="fas fa-download"></i> Export All</button>
+                </div>
+
+                <div class="lab-results-list">
+                    <div class="lab-result-card">
+                        <div class="lab-result-header">
+                            <h3>Complete Blood Count (CBC)</h3>
+                            <span class="badge-normal">Normal</span>
+                        </div>
+                        <div class="lab-result-details">
+                            <p><i class="fas fa-calendar"></i> Test Date: Nov 5, 2024</p>
+                            <p><i class="fas fa-hospital"></i> Lab: City Medical Laboratory</p>
+                            <p><i class="fas fa-user-md"></i> Ordered by: Dr. Sarah Johnson</p>
+                        </div>
+                        <div class="lab-result-values">
+                            <div class="lab-value">
+                                <span class="value-name">WBC</span>
+                                <span class="value-result">7.2 K/µL</span>
+                                <span class="value-range">4.5-11.0</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">RBC</span>
+                                <span class="value-result">4.8 M/µL</span>
+                                <span class="value-range">4.5-5.5</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">Hemoglobin</span>
+                                <span class="value-result">14.5 g/dL</span>
+                                <span class="value-range">13.5-17.5</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">Platelets</span>
+                                <span class="value-result">250 K/µL</span>
+                                <span class="value-range">150-400</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-download"></i> Download Report</button>
+                    </div>
+
+                    <div class="lab-result-card">
+                        <div class="lab-result-header">
+                            <h3>Lipid Panel</h3>
+                            <span class="badge-normal">Normal</span>
+                        </div>
+                        <div class="lab-result-details">
+                            <p><i class="fas fa-calendar"></i> Test Date: Oct 15, 2024</p>
+                            <p><i class="fas fa-hospital"></i> Lab: City Medical Laboratory</p>
+                            <p><i class="fas fa-user-md"></i> Ordered by: Dr. Michael Smith</p>
+                        </div>
+                        <div class="lab-result-values">
+                            <div class="lab-value">
+                                <span class="value-name">Total Cholesterol</span>
+                                <span class="value-result">185 mg/dL</span>
+                                <span class="value-range"><200</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">LDL</span>
+                                <span class="value-result">110 mg/dL</span>
+                                <span class="value-range"><130</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">HDL</span>
+                                <span class="value-result">55 mg/dL</span>
+                                <span class="value-range">>40</span>
+                            </div>
+                            <div class="lab-value">
+                                <span class="value-name">Triglycerides</span>
+                                <span class="value-result">120 mg/dL</span>
+                                <span class="value-range"><150</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-small"><i class="fas fa-download"></i> Download Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages View -->
+            <div id="messages-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-comments"></i> Messages</h1>
+                    <button class="btn btn-primary"><i class="fas fa-pen"></i> New Message</button>
+                </div>
+
+                <div class="messages-container">
+                    <div class="message-card unread">
+                        <div class="message-from">
+                            <i class="fas fa-user-md"></i>
+                            <span>Dr. Sarah Johnson</span>
+                        </div>
+                        <h3>Follow-up on Recent Lab Results</h3>
+                        <p class="message-preview">Your recent blood work looks great! All parameters are within normal range. Let's discuss this further during your upcoming appointment...</p>
+                        <div class="message-meta">
+                            <span><i class="fas fa-clock"></i> 2 hours ago</span>
+                            <button class="btn btn-text">Reply</button>
+                        </div>
+                    </div>
+
+                    <div class="message-card">
+                        <div class="message-from">
+                            <i class="fas fa-hospital"></i>
+                            <span>Billing Department</span>
+                        </div>
+                        <h3>Invoice for Recent Visit</h3>
+                        <p class="message-preview">Your invoice for the visit on October 28, 2024 is now available. Total amount: $150.00. Click to view details and payment options...</p>
+                        <div class="message-meta">
+                            <span><i class="fas fa-clock"></i> 1 day ago</span>
+                            <button class="btn btn-text">View Invoice</button>
+                        </div>
+                    </div>
+
+                    <div class="message-card">
+                        <div class="message-from">
+                            <i class="fas fa-bell"></i>
+                            <span>Appointment Reminder</span>
+                        </div>
+                        <h3>Upcoming Appointment Reminder</h3>
+                        <p class="message-preview">This is a reminder for your appointment with Dr. Sarah Johnson on December 15, 2024 at 10:00 AM. Please arrive 15 minutes early...</p>
+                        <div class="message-meta">
+                            <span><i class="fas fa-clock"></i> 3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing View -->
+            <div id="billing-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-file-invoice-dollar"></i> Billing & Payments</h1>
+                    <button class="btn btn-primary"><i class="fas fa-credit-card"></i> Make Payment</button>
+                </div>
+
+                <div class="billing-summary">
+                    <div class="billing-stat">
+                        <h3>Outstanding Balance</h3>
+                        <p class="balance-amount">$250.00</p>
+                    </div>
+                    <div class="billing-stat">
+                        <h3>Pending Invoices</h3>
+                        <p class="invoice-count">2</p>
+                    </div>
+                    <div class="billing-stat">
+                        <h3>Last Payment</h3>
+                        <p class="last-payment">$100.00 - Oct 15, 2024</p>
+                    </div>
+                </div>
+
+                <div class="invoices-list">
+                    <div class="invoice-card pending">
+                        <div class="invoice-header">
+                            <h3>Invoice #INV-2024-1156</h3>
+                            <span class="badge-pending">Pending</span>
+                        </div>
+                        <div class="invoice-details">
+                            <p><i class="fas fa-calendar"></i> Date: Oct 28, 2024</p>
+                            <p><i class="fas fa-user-md"></i> Provider: Dr. Michael Smith</p>
+                            <p><i class="fas fa-notes-medical"></i> Service: Annual Physical Exam</p>
+                        </div>
+                        <div class="invoice-amount">
+                            <span>Amount Due:</span>
+                            <span class="amount">$150.00</span>
+                        </div>
+                        <div class="invoice-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-credit-card"></i> Pay Now</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-download"></i> Download</button>
+                        </div>
+                    </div>
+
+                    <div class="invoice-card pending">
+                        <div class="invoice-header">
+                            <h3>Invoice #INV-2024-1142</h3>
+                            <span class="badge-pending">Pending</span>
+                        </div>
+                        <div class="invoice-details">
+                            <p><i class="fas fa-calendar"></i> Date: Nov 5, 2024</p>
+                            <p><i class="fas fa-hospital"></i> Provider: City Medical Lab</p>
+                            <p><i class="fas fa-flask"></i> Service: Laboratory Tests</p>
+                        </div>
+                        <div class="invoice-amount">
+                            <span>Amount Due:</span>
+                            <span class="amount">$100.00</span>
+                        </div>
+                        <div class="invoice-actions">
+                            <button class="btn btn-primary btn-small"><i class="fas fa-credit-card"></i> Pay Now</button>
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-download"></i> Download</button>
+                        </div>
+                    </div>
+
+                    <div class="invoice-card paid">
+                        <div class="invoice-header">
+                            <h3>Invoice #INV-2024-1098</h3>
+                            <span class="badge-paid">Paid</span>
+                        </div>
+                        <div class="invoice-details">
+                            <p><i class="fas fa-calendar"></i> Date: Sep 20, 2024</p>
+                            <p><i class="fas fa-x-ray"></i> Provider: Radiology Department</p>
+                            <p><i class="fas fa-notes-medical"></i> Service: Chest X-Ray</p>
+                        </div>
+                        <div class="invoice-amount">
+                            <span>Paid:</span>
+                            <span class="amount">$80.00</span>
+                        </div>
+                        <div class="invoice-actions">
+                            <button class="btn btn-secondary btn-small"><i class="fas fa-receipt"></i> View Receipt</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Status View -->
+            <div id="system-view" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-server"></i> System Status</h1>
+                    <button class="btn btn-secondary" id="refresh-status"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+
+                <div class="system-status-grid">
+                    <div class="system-card">
+                        <div class="system-header">
+                            <h3><i class="fas fa-shield-alt"></i> Registration Center</h3>
+                            <span class="status-badge" id="rc-status-badge">
+                                <span class="status-dot"></span>
+                                <span>Checking...</span>
+                            </span>
+                        </div>
+                        <p>Central authentication and credential management service</p>
+                        <div class="system-details">
+                            <p><strong>Endpoint:</strong> http://localhost:5000</p>
+                            <p><strong>Status:</strong> <span id="rc-status-text">Checking...</span></p>
+                        </div>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-header">
+                            <h3><i class="fas fa-hospital"></i> Healthcare Server</h3>
+                            <span class="status-badge" id="server-status-badge">
+                                <span class="status-dot"></span>
+                                <span>Checking...</span>
+                            </span>
+                        </div>
+                        <p>Main hospital server handling patient data and authentication</p>
+                        <div class="system-details">
+                            <p><strong>Endpoint:</strong> http://localhost:5001</p>
+                            <p><strong>Server ID:</strong> <span id="server-id">hospital2</span></p>
+                            <p><strong>Location:</strong> <span id="server-location">Goa</span></p>
+                        </div>
+                    </div>
+
+                    <div class="system-card">
+                        <div class="system-header">
+                            <h3><i class="fas fa-layer-group"></i> Middleware API</h3>
+                            <span class="status-badge" id="middleware-status-badge">
+                                <span class="status-dot"></span>
+                                <span>Checking...</span>
+                            </span>
+                        </div>
+                        <p>API gateway and application backend service</p>
+                        <div class="system-details">
+                            <p><strong>Endpoint:</strong> http://localhost:8000</p>
+                            <p><strong>Status:</strong> <span id="middleware-status-text">Checking...</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-lock"></i> Security Information</h2>
+                    </div>
+                    <div class="security-info">
+                        <div class="info-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <h4>Authentication Protocol</h4>
+                                <p>Privacy-Preserving Mutual Authentication using SHA-256 and XOR operations</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-key"></i>
+                            <div>
+                                <h4>Current Session</h4>
+                                <p id="session-key-display">Session Key: <code class="copyable" id="current-session-key">Not authenticated</code></p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-id-card"></i>
+                            <div>
+                                <h4>Smartcard Status</h4>
+                                <p id="smartcard-status">Smartcard loaded and active</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Smartcard Credentials Modal -->
+    <div id="credentials-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-id-card"></i> Smartcard Credentials</h2>
+                <button class="modal-close" id="close-credentials-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Keep these credentials secure. You'll need them for authentication.</p>
+                </div>
+                <div class="credentials-grid">
+                    <div class="credential-item">
+                        <label>W_i:</label>
+                        <code class="copyable" id="modal-wi"></code>
+                    </div>
+                    <div class="credential-item">
+                        <label>X_i:</label>
+                        <code class="copyable" id="modal-xi"></code>
+                    </div>
+                    <div class="credential-item">
+                        <label>Y_i:</label>
+                        <code class="copyable" id="modal-yi"></code>
+                    </div>
+                    <div class="credential-item">
+                        <label>Z_i:</label>
+                        <code class="copyable" id="modal-zi"></code>
+                    </div>
+                    <div class="credential-item">
+                        <label>E_i:</label>
+                        <code class="copyable" id="modal-ei"></code>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="download-credentials">
+                    <i class="fas fa-download"></i> Download Credentials
+                </button>
+                <button class="btn btn-primary" id="proceed-to-login">
+                    <i class="fas fa-sign-in-alt"></i> Proceed to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js" defer></script>
+</body>
+</html>

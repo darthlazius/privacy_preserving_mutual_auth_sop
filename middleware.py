@@ -1,5 +1,8 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 import hashlib, secrets, time, requests, json, os
 
 # === CONFIGURATION ===
@@ -8,6 +11,33 @@ SERVER_URL = os.environ.get("SERVER_URL", "http://127.0.0.1:5001")  # Hospital S
 USER_DATA_FILE = "user_data.json"
 
 app = FastAPI(title="User Middleware API", version="1.0")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify exact origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add GZip compression for faster response times
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Cache HTML in memory for faster loading
+_HTML_CACHE = None
+def get_cached_html():
+    global _HTML_CACHE
+    if _HTML_CACHE is None:
+        try:
+            with open("index.html", "r") as f:
+                _HTML_CACHE = f.read()
+        except FileNotFoundError:
+            _HTML_CACHE = ""
+    return _HTML_CACHE
 
 # ====================== UTILITY FUNCTIONS ======================
 def calculate_A_i(ID_i, PW_i):
@@ -163,6 +193,13 @@ async def authenticate_user(req: Request):
     }, status_code=200)
 
 
-@app.get("/")
-def home():
+@app.get("/", response_class=HTMLResponse)
+async def home():
+    html = get_cached_html()
+    if html:
+        return html
     return {"message": "User Middleware API is running 🚀"}
+
+@app.get("/health")
+def health():
+    return {"message": "User Middleware API is running 🚀", "status": "healthy"}
