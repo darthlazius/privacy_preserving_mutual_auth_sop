@@ -137,11 +137,14 @@ def register_user():
 
 
 def authenticate_with_server():
+    start_time = time.time()  # Start timing the authentication process
+
     SmartCard_i = load_user_data()
     if not SmartCard_i:
         print("Smartcard not found.")
         return
 
+    phase1_start = time.time()  # Phase 1: Smartcard verification
     W_i = SmartCard_i['W_i']
     X_i = SmartCard_i['X_i']
     Y_i = SmartCard_i['Y_i']
@@ -159,20 +162,22 @@ def authenticate_with_server():
     USK_i = hex(int(A_i, 16) ^ int(Y_i, 16))[2:].zfill(64)
     UID_i = hashlib.sha256((r1 + ID_i + r2).encode()).hexdigest()
     E_prime = hashlib.sha256((UID_i + PW_i + USK_i).encode()).hexdigest()
-    # if E_prime != E_i:
-    #     print("Smartcard verification failed.")
-    #     return
+    phase1_end = time.time()
+    print(f"Phase 1 (Smartcard verification) time: {phase1_end - phase1_start:.6f} seconds")
 
-    # === Get server info ===
+    # Phase 2: Server information retrieval
+    phase2_start = time.time()
     server_info = requests.get(Server_URL).json()
     ID_j = server_info['creds']['ID_j']
-    print(List_sj)
     SSK_j, Loc_j = extract_server_details(List_sj, ID_j)
     if not SSK_j:
         print(f"Server {ID_j} not found in List_sj.")
         return
+    phase2_end = time.time()
+    print(f"Phase 2 (Server information retrieval) time: {phase2_end - phase2_start:.6f} seconds")
 
-    # === Begin Authentication ===
+    # Phase 3: Authentication request and response
+    phase3_start = time.time()
     T1 = str(int(time.time()))
     h1 = hashlib.sha256((ID_j + SSK_j + T1).encode()).hexdigest()
     alpha_i = hex(int(UID_i, 16) ^ int(h1, 16))[2:].zfill(64)
@@ -200,27 +205,29 @@ def authenticate_with_server():
     res_data = res.json()
     gamma_i = res_data['gamma_i']
     sigma_i = res_data['sigma_i']
-    print(sigma_i)
     T2 = int(res_data['T2'])
     T3 = int(time.time())
     if T3 - T2 > 60:
         print("Server response too old.")
         return
+    phase3_end = time.time()
+    print(f"Phase 3 (Authentication request and response) time: {phase3_end - phase3_start:.6f} seconds")
 
-    # === Verify Server
+    # Phase 4: Server verification
+    phase4_start = time.time()
     VT_ij = hashlib.sha256((UID_i + "location-verification").encode()).hexdigest()
     h_comb = hashlib.sha256((C_i + UID_i + ID_j + beta_i).encode()).hexdigest()
     vt_loc = int(gamma_i, 16) ^ int(h_comb, 16)
     sigma_check = hashlib.sha256((hex(vt_loc)[2:] + C_i + str(T2 - int(T1))).encode()).hexdigest()
-    # if sigma_check != sigma_i:
-    #     print("Server authenticity failed.")
-    #     return
 
     SK_ij = hashlib.sha256((UID_i + ID_j + C_i + Loc_j + hex(vt_loc)[2:]).encode()).hexdigest()
-    print(" Mutual Authentication Successful")
-    print(" Session Key:", SK_ij)
+    phase4_end = time.time()
+    print(f"Phase 4 (Server verification) time: {phase4_end - phase4_start:.6f} seconds")
 
-
+    total_time = time.time() - start_time
+    print("Mutual Authentication Successful")
+    print("Session Key:", SK_ij)
+    print(f"Total authentication time: {total_time:.6f} seconds")
 
 
 
