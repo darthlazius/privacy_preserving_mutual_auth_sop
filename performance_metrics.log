@@ -1,0 +1,4 @@
+2025-11-10 18:16:34.%f | REGISTRATION | user=kushagra_malviya | initial_comp=0.306ms | rc_comm=91.329ms | smartcard_comp=8.409ms | TOTAL=100.564ms
+2025-11-10 18:17:45.%f | REGISTRATION | user=pokemon | initial_comp=0.192ms | rc_comm=66.479ms | smartcard_comp=6.842ms | TOTAL=73.697ms
+2025-11-10 18:25:22.%f | REGISTRATION | user=alice123 | initial_comp=0.145ms | rc_comm=54.300ms | smartcard_comp=3.524ms | TOTAL=58.148ms
+2025-11-10 18:25:36.%f | AUTHENTICATION | user=alice123 | smartcard_load=150.824ms | credential_verify=0.026ms | server_lookup=16.854ms | msg_prep=0.047ms | server_comm=56.371ms | verify_sk=0.045ms | TOTAL=224.261ms

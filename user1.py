@@ -154,9 +154,13 @@ def authenticate_with_server():
 
     A_i = calculate_A_i()
     r1r2 = int(W_i, 16) ^ int(A_i, 16)
-    r1r2_bytes = bytes.fromhex(hex(r1r2)[2:].zfill(64))
-    r1 = r1r2_bytes[:16].hex()
-    r2 = r1r2_bytes[16:].hex()
+    # Fix: Need to decode UTF-8 to get original r1+r2 string, not convert to hex
+    r1r2_hex = hex(r1r2)[2:]
+    if len(r1r2_hex) % 2 == 1:
+        r1r2_hex = '0' + r1r2_hex
+    r1r2_bytes = bytes.fromhex(r1r2_hex)
+    r1r2_str = r1r2_bytes.decode('utf-8', errors='ignore')
+    r1, r2 = r1r2_str[:32], r1r2_str[32:]
     List_sj = extract_list_sj_from_z(Z_i, r1, r2, ID_i, PW_i)
     Bi = calculate_B_i()
     USK_i = hex(int(A_i, 16) ^ int(Y_i, 16))[2:].zfill(64)
