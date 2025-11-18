@@ -1,34 +1,8 @@
-INFO:     Started server process [1477]
+INFO:     Started server process [6886]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:59515 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59515 - "GET /static/styles.css HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:59096 - "GET /static/app.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:59096 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:60142 - "POST /authenticate_user HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60142 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65402 - "POST /authenticate_user HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65402 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55679 - "POST /authenticate_user HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55679 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62538 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60913 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60721 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52081 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51807 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63166 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55569 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58194 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61522 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60906 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59616 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65231 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59457 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61882 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57910 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53442 - "GET / HTTP/1.1" 200 OK
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [1477]
+INFO:     127.0.0.1:49866 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54622 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49866 - "GET /static/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49866 - "GET /favicon.ico HTTP/1.1" 404 Not Found

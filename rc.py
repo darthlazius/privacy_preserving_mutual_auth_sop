@@ -62,7 +62,6 @@ def register_server():
     return jsonify({"SSK_j": SSK_j}), 201
 
 @app.route('/register_user', methods=['POST'])
-@app.route('/register_user', methods=['POST'])
 def register_user():
     data = request.get_json()
     UID_i = data.get('UID_i')

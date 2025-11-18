@@ -24,9 +24,10 @@ def init_server_db():
 
 
 RC_URL = os.environ.get("RC_URL", "http://localhost:5000")
-ID_j = os.environ.get("SERVER_ID", "hospital2")
-PW_j = os.environ.get("SERVER_PASSWORD", "admin1234")
-Loc_j = os.environ.get("SERVER_LOCATION", "Goa")
+ID_j = os.environ.get("SERVER_ID", "hospital1")
+PW_j = os.environ.get("SERVER_PASSWORD", "admin1111")
+Loc_j = os.environ.get("SERVER_LOCATION", "Mumbai")
+SERVER_PORT = int(os.environ.get("SERVER_PORT", "5001"))
 r_S = secrets.token_hex(16)
 SSK_j = None
 
@@ -90,11 +91,10 @@ def authenticate_user():
         return jsonify({"error": "Invalid Server ID"}), 403
     
     T2 = str(int(time.time()))
-    # Step 1: Recompute UID_i from alpha
-    cursor = sqlite3.connect('rc.db').cursor()
-    SSK_j = cursor.execute("SELECT SSK_j FROM servers WHERE ID_j = ?", (ID_j,)).fetchone()
-    SSK_j = SSK_j[0] if SSK_j else None
-    print(SSK_j)
+    # Step 1: Use the server's own SSK_j (from registration)
+    if not SSK_j:
+        return jsonify({"error": "Server not registered"}), 500
+
     h_val = hashlib.sha256((ID_j + SSK_j + T1).encode()).hexdigest()
     UID_i_recovered = hex(int(alpha_i, 16) ^ int(h_val, 16))[2:].zfill(64)
 
@@ -134,13 +134,26 @@ def update_server_db():
 
 
 if __name__ == '__main__':
-    # Attempt registration on startup (only if not already registered)
+    print(f"\n{'='*60}")
+    print(f"  Starting Server: {ID_j}")
+    print(f"{'='*60}")
+    print(f"  Server ID:  {ID_j}")
+    print(f"  Location:   {Loc_j}")
+    print(f"  Port:       {SERVER_PORT}")
+    print(f"  RC URL:     {RC_URL}")
+    print(f"{'='*60}\n")
+
+    # Attempt registration on startup
     if not SSK_j:
         with app.app_context():
-            response = requests.post("http://localhost:5000/register_server") #Register with RC
-            if response.status_code != 200:
-                print ("There was an error reaching the server. Check the server URL")
-            else:
-                print ("There was a server. Registration Successful")
+            try:
+                response = register_server()
+                if response[1] == 200:
+                    print(f"✓ {ID_j} registered successfully with RC")
+                else:
+                    print(f"✗ Registration failed for {ID_j}")
+            except Exception as e:
+                print(f"✗ Error registering with RC: {e}")
 
-    app.run(port=5001, debug=True)
+    # Run server with configured port
+    app.run(host='0.0.0.0', port=SERVER_PORT, debug=False, use_reloader=False)

@@ -1,0 +1,35 @@
+{
+  "servers": [
+    {
+      "id": "hospital1",
+      "password": "admin1111",
+      "location": "Mumbai",
+      "port": 5001
+    },
+    {
+      "id": "hospital2",
+      "password": "admin2222",
+      "location": "Delhi",
+      "port": 5002
+    },
+    {
+      "id": "hospital3",
+      "password": "admin3333",
+      "location": "Bangalore",
+      "port": 5003
+    },
+    {
+      "id": "hospital4",
+      "password": "admin4444",
+      "location": "Chennai",
+      "port": 5004
+    },
+    {
+      "id": "hospital5",
+      "password": "admin5555",
+      "location": "Kolkata",
+      "port": 5005
+    }
+  ],
+  "rc_url": "http://127.0.0.1:5000"
+}

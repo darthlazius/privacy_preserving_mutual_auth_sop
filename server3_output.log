@@ -1,0 +1,23 @@
+
+============================================================
+  Starting Server: hospital3
+============================================================
+  Server ID:  hospital3
+  Location:   Bangalore
+  Port:       5003
+  RC URL:     http://localhost:5000
+============================================================
+
+Server registered. SSK_j:e05599a930964a3daf2bcd9094ecc11c2804326e1bc55502de87a85af6206d86
+✓ hospital3 registered successfully with RC
+ * Serving Flask app 'server1'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5003
+ * Running on http://10.3.6.133:5003
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Nov/2025 11:54:48] "POST /authenticate HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2025 11:54:55] "POST /authenticate HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2025 11:55:04] "POST /authenticate HTTP/1.1" 200 -
+127.0.0.1 - - [14/Nov/2025 11:55:11] "POST /authenticate HTTP/1.1" 200 -
