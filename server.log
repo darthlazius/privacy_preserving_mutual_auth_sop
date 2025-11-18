@@ -1,13 +1,19 @@
-There was an error reaching the server. Check the server URL
+
+============================================================
+  Starting Server: hospital1
+============================================================
+  Server ID:  hospital1
+  Location:   Mumbai
+  Port:       5001
+  RC URL:     http://localhost:5000
+============================================================
+
+Error registering with RC: 409 Client Error: CONFLICT for url: http://localhost:5000/register_server
+✗ Registration failed for hospital1
  * Serving Flask app 'server1'
- * Debug mode: on
+ * Debug mode: off
 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5001
+ * Running on http://10.3.6.121:5001
 [33mPress CTRL+C to quit[0m
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 856-728-672
-127.0.0.1 - - [12/Nov/2025 08:05:32] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [12/Nov/2025 08:05:32] "POST /authenticate HTTP/1.1" 200 -
-127.0.0.1 - - [12/Nov/2025 08:05:33] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [12/Nov/2025 08:06:03] "GET / HTTP/1.1" 200 -

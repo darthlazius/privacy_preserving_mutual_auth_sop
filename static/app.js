@@ -1,7 +1,8 @@
 // ==================== CONFIGURATION ====================
-const API_BASE_URL = 'http://localhost:8000';
-const RC_URL = 'http://localhost:5000';
-const SERVER_URL = 'http://localhost:5001';
+// Use environment variables if available, otherwise fallback to localhost
+const API_BASE_URL = window.ENV?.API_BASE_URL || 'http://localhost:8000';
+const RC_URL = window.ENV?.RC_URL || 'http://localhost:5000';
+const SERVER_URL = window.ENV?.SERVER_URL || 'http://localhost:5001';
 
 // ==================== GLOBAL STATE ====================
 let currentUser = null;

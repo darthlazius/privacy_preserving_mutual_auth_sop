@@ -60,6 +60,8 @@ body {
     justify-content: center;
     background: linear-gradient(135deg, #0066cc 0%, #004a99 100%);
     padding: 20px;
+    width: 100%;
+    position: relative;
 }
 
 .auth-box {
@@ -70,6 +72,7 @@ body {
     max-width: 480px;
     overflow: hidden;
     animation: slideUp 0.5s ease-out;
+    margin: 0 auto;
 }
 
 @keyframes slideUp {
