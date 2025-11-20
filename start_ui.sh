@@ -44,7 +44,7 @@ echo "Starting Healthcare Server on http://localhost:5001..."
 python3 server1.py > server.log 2>&1 &
 SERVER_PID=$!
 sleep 0.5
-
+ 
 # Start Middleware with UI
 echo "Starting Middleware & UI on http://localhost:8000..."
 uvicorn middleware:app --host 0.0.0.0 --port 8000 > middleware.log 2>&1 &
